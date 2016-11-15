@@ -11,5 +11,9 @@ public class TillSys {
 	public static void main(String[] args){
 		
 		TillSysWindow mainWindow = new TillSysWindow();
-    }       
+    }
+    
+    public TillSys () {
+        
+    }
 }
