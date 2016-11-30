@@ -18,6 +18,8 @@ public class TillSys extends JFrame implements ActionListener{
     JPanel container1, container2, container3, container4, container5;
     JButton[] button;
     JButton[] funct;
+    double num1 = 0;
+    double num2 = 0;
 
     //main driver
 	public static void main(String[] args){
@@ -47,7 +49,7 @@ public class TillSys extends JFrame implements ActionListener{
         //contents.setLayout(new FlowLayout());
 
 
-        Multiply multiplication = new Multiply()
+        Multiply multiplication = new Multiply();
 
 
 
@@ -201,17 +203,17 @@ public class TillSys extends JFrame implements ActionListener{
             temp = Double.parseDouble(display.getText());
 
                 if (function == 0) {
-                    display.setText(Double.toString((Math.round((tempNumbers1 / tempNumbers2) * 100)) / 100));
+                    display.setText(Double.toString((Math.round((num1 / num2) * 100)) / 100));
                 } else if (function == 1) {
-                    display.setText(Double.toString(tempNumbers1 * tempNumbers2));
+                    display.setText(Double.toString(num1 * num2));
                 } else if (function == 2) {
-                    display.setText(Double.toString(tempNumbers2 + tempNumbers1));
+                    display.setText(Double.toString(num2 + num1));
                 } else if (function == 3) {
-                    display.setText(Double.toString(tempNumbers1 - tempNumbers2));
+                    display.setText(Double.toString(num1 - num2));
                 } else {
-                    display.setText(String.valueOf(tempNumbers1));
+                    display.setText(String.valueOf(num1));
                 }
-                tempNumbers1 = Double.parseDouble(resultJText.getText());
+                num1 = Double.parseDouble(display.getText());
             }
         }
     }
