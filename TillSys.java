@@ -11,8 +11,9 @@ import java.awt.event.ActionListener;
 
 public class TillSys extends JFrame implements ActionListener{
 
-    JTextArea display;
+    JTextField display;
     String displayArea = "123456789.0";
+    public String user;
     JMenu fileMenu;
     JPanel container1, container2, container3, container4, container5;
     JButton[] button;
@@ -69,9 +70,9 @@ public class TillSys extends JFrame implements ActionListener{
             gbc.fill = GridBagConstraints.BOTH;
 
             //display screen
-            display = new JTextArea(displayArea);
-                display.setLayout(new BorderLayout());
-                display.setFont(new Font("Segoe UI", Font.BOLD, 48));
+            display = new JTextField();
+            display.setLayout(new BorderLayout());
+            display.setFont(new Font("Segoe UI", Font.BOLD, 48));
             container2.setLayout(new BorderLayout());
             container2.add(display);
             container2.setBorder(BorderFactory.createLineBorder(Color.yellow));
@@ -144,18 +145,16 @@ public class TillSys extends JFrame implements ActionListener{
         setVisible(true);
 
 
-        JButton loginButton = new JButton("Login");
-        loginButton.setSize(100, 50);
-
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
         menuBar.setBackground(Color.lightGray);
         menuBar.add(fileMenu);
     }
 
-    public void actionPerformed(ActionEvent event){
+    public void actionPerformed(ActionEvent menuEvent){
         String menuName;
-        menuName = event.getActionCommand();
+            menuName = menuEvent.getActionCommand();
+
         if (menuName.equals("Quit")) {
             System.exit(0);
         } else if (menuName.equals("Member")) {
@@ -167,9 +166,7 @@ public class TillSys extends JFrame implements ActionListener{
             LoginFrame adminLogin = new LoginFrame(TillSys.this);
             adminLogin.setVisible(true);
         }
-
-        System.out.println(menuName);
-
+        //System.out.println(menuName);
     }
 
     private void loginFileMenu(){
@@ -182,8 +179,6 @@ public class TillSys extends JFrame implements ActionListener{
         item.addActionListener(this);
         fileMenu.add(item);
 
-
-
         item = new JMenuItem("Member");
         item.addActionListener(this);
         fileMenu.add(item);
@@ -193,33 +188,34 @@ public class TillSys extends JFrame implements ActionListener{
         fileMenu.add(item);
     }
 
-    private static void placeComponents(JPanel panel) {
+    private class Multiply implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
 
-        panel.setLayout(null);
-
-        JLabel userLabel = new JLabel("User");
-        userLabel.setBounds(10, 10, 80, 25);
-        panel.add(userLabel);
-
-        JTextField userText = new JTextField(20);
-        userText.setBounds(100, 10, 160, 25);
-        panel.add(userText);
-
-        JLabel passwordLabel = new JLabel("Password");
-        passwordLabel.setBounds(10, 40, 80, 25);
-        panel.add(passwordLabel);
-
-        JPasswordField passwordText = new JPasswordField(20);
-        passwordText.setBounds(100, 40, 160, 25);
-        panel.add(passwordText);
-
-        JButton loginButton = new JButton("login");
-        loginButton.setBounds(10, 80, 80, 25);
-        panel.add(loginButton);
-
-        JButton registerButton = new JButton("register");
-        registerButton.setBounds(180, 80, 80, 25);
-        panel.add(registerButton);
+        }
     }
+
+    private class Divide implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+        }
+    }
+
+    private class Add implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+        }
+    }
+
+    private class Subtract implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+        }
+    }
+
+
 
 }
