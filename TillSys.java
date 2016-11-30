@@ -12,7 +12,7 @@ import java.awt.event.ActionListener;
 public class TillSys extends JFrame implements ActionListener{
 
     JTextField display;
-    String displayArea = "123456789.0";
+    String temp, displayArea = "123456789.0";
     public String user;
     JMenu fileMenu;
     JPanel container1, container2, container3, container4, container5;
@@ -45,6 +45,12 @@ public class TillSys extends JFrame implements ActionListener{
 
         //contents = getContentPane();
         //contents.setLayout(new FlowLayout());
+
+
+        Multiply multiplication = new Multiply()
+
+
+
 
         container1 = new JPanel();
             gbc.gridx = 0;
@@ -188,6 +194,35 @@ public class TillSys extends JFrame implements ActionListener{
         fileMenu.add(item);
     }
 
+    private class Enter implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            temp = Double.parseDouble(display.getText());
+
+                if (function == 0) {
+                    display.setText(Double.toString((Math.round((tempNumbers1 / tempNumbers2) * 100)) / 100));
+                } else if (function == 1) {
+                    display.setText(Double.toString(tempNumbers1 * tempNumbers2));
+                } else if (function == 2) {
+                    display.setText(Double.toString(tempNumbers2 + tempNumbers1));
+                } else if (function == 3) {
+                    display.setText(Double.toString(tempNumbers1 - tempNumbers2));
+                } else {
+                    display.setText(String.valueOf(tempNumbers1));
+                }
+                tempNumbers1 = Double.parseDouble(resultJText.getText());
+            }
+        }
+    }
+
+    private class Cancel implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+        }
+    }
+
     private class Multiply implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -215,7 +250,5 @@ public class TillSys extends JFrame implements ActionListener{
 
         }
     }
-
-
 
 }
