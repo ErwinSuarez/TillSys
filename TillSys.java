@@ -1,36 +1,39 @@
-/**
- * @(#)TillSys.java
+/* @(#)TillSys.java
  *
  * @Erwin Suarez
- * @version 1.00 2016/11/15
+ * @version 1.00 2016/12/1
  */
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.geom.Arc2D;
 
 public class TillSys extends JFrame implements ActionListener {
 
-    JTextField display;
+    JTextField displayText;
 
     JMenu fileMenu;
     JPanel container1, container2, container3, container4, container5;
     JPanel extrasPanel,numbersPanel,functionsPanel;
-
     JButton[] extras,numbers, functions;
 
-    String tempVal = "", displayArea = "123456789.0";
+    String tempString = "";
+    String displayArea = "0";
+    String pressed;
     //public String user;
-    double num1 = 0, num2 = 0;
+    double num1 = 0;
+    double num2 = 0;
+    double tempValue = 0;
+
 
     //main driver
 	public static void main(String[] args) {
-		TillSys winOne = new TillSys();
-        winOne.setVisible(true);
+		TillSys tillSys = new TillSys();
+        tillSys.setVisible(true);
     }//end driver
+
 
     //Constructor creates the main window
     public TillSys () {
@@ -41,13 +44,22 @@ public class TillSys extends JFrame implements ActionListener {
         setResizable(false);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        setVisible(true);
 
         //this will place the frame centered in the screen
         //copied from web in File
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        ButtonListener buttonListener = new ButtonListener();
+        EnterButton enter = new EnterButton();
+        CancelButton cancel = new CancelButton();
+        MultiplyButton multiply = new MultiplyButton();
+        DivideButton divide = new DivideButton();
+        AddButton add = new AddButton();
+        SubtractButton subtract = new SubtractButton();
+        JMenuBar menuBar = new JMenuBar();
+
 
         //login panel
         container1 = new JPanel();
@@ -64,25 +76,25 @@ public class TillSys extends JFrame implements ActionListener {
                 container1.setBorder(BorderFactory.createLineBorder(Color.black));
         add(container1, gbc);
 
-
+        //display panel
         container2 = new JPanel();
             gbc.gridx = 1;
             gbc.gridy = 0;
-
             gbc.weighty = 40;
             gbc.gridwidth = GridBagConstraints.HORIZONTAL;
             gbc.fill = GridBagConstraints.BOTH;
 
             //display screen
-            display = new JTextField();
-            display.setLayout(new BorderLayout());
-            display.setFont(new Font("Segoe UI", Font.BOLD, 48));
+            displayText = new JTextField(displayArea);
+            displayText.setLayout(new BorderLayout());
+            displayText.setFont(new Font("Segoe UI", Font.BOLD, 48));
+            displayText.setHorizontalAlignment(SwingConstants.RIGHT);
             container2.setLayout(new BorderLayout());
-            container2.add(display);
+            container2.add(displayText);
             container2.setBorder(BorderFactory.createLineBorder(Color.yellow));
         add(container2, gbc);
 
-
+        //special buttons panel
         container3 = new JPanel();
             gbc.gridx = 0;
             gbc.gridy = 1;
@@ -92,8 +104,7 @@ public class TillSys extends JFrame implements ActionListener {
             gbc.fill = GridBagConstraints.BOTH;
             gbc.insets = new Insets(10,10,10,10);
 
-
-            //special buttons area
+            //special buttons
             container3.setLayout(new BorderLayout());
             container3.setPreferredSize(new Dimension(300,400));
             extrasPanel = new JPanel(new GridLayout(4,2,10,10));
@@ -106,19 +117,16 @@ public class TillSys extends JFrame implements ActionListener {
                 extras[2] = new JButton("Close2");
                 extras[1] = new JButton("Edit1");
                 extras[0] = new JButton("Delete0");
-
                 for( int w = 7; w >= 0; w--) {
-
                     extras[w].setFont(new Font("Segoe UI", Font.BOLD, 14));
-                    extras[w].addActionListener(this);
+                    extras[w].addActionListener(buttonListener);
                     extrasPanel.add(extras[w]);
                 }
-
             container3.add(extrasPanel);
             container3.setBorder(BorderFactory.createLineBorder(Color.red));
         add(container3, gbc);
 
-
+        //numbers panel
         container4 = new JPanel();
             gbc.gridx = 1;
             gbc.gridy = 1;
@@ -136,15 +144,19 @@ public class TillSys extends JFrame implements ActionListener {
                 for( int x = 9; x >= 0; x--) {
                     numbers[x] = new JButton(Integer.toString(x));
                     numbers[x].setFont(new Font("Segoe UI", Font.BOLD, 36));
-                    numbers[x].addActionListener(this);
+                    numbers[x].addActionListener(buttonListener);
                     numbersPanel.add(numbers[x]);
                 }
-
+                /*numbers[10] = new JButton(".");
+                numbers[10].setFont(new Font("Segoe UI", Font.BOLD, 36));
+                numbers[10].addActionListener(buttonListener);
+                numbersPanel.add(numbers[10]);
+                */
             container4.add(numbersPanel);
             container2.setBorder(BorderFactory.createLineBorder(Color.green));
         add(container4, gbc);
 
-
+        //functions panel
         container5 = new JPanel();
             gbc.gridx = 2;
             gbc.gridy = 1;
@@ -152,15 +164,11 @@ public class TillSys extends JFrame implements ActionListener {
             gbc.weighty = 60;
             gbc.fill = GridBagConstraints.BOTH;
 
-            //function buttins area
+            //function buttons area
             container5.setLayout(new BorderLayout());
             container5.setPreferredSize(new Dimension(200,400));
             functionsPanel = new JPanel();
             functions = new JButton[6];
-
-            //call the buttons to listen
-            ButtonListener btnListener = new ButtonListener();
-
                 functionsPanel.setLayout(new GridLayout(3,2,15,15));
                 functionsPanel.add(functions[5] = new JButton("+"));
                 functionsPanel.add(functions[4] = new JButton("-"));
@@ -170,20 +178,24 @@ public class TillSys extends JFrame implements ActionListener {
                 functionsPanel.add(functions[0] = new JButton("Enter"));
                 for( int y = 5; y >= 0; y--) {
                     functions[y].setFont(new Font("Segoe UI", Font.BOLD, 36));
-                    functions[y].addActionListener(btnListener);
+                    functions[y].addActionListener(buttonListener);
                     functionsPanel.add(functions[y]);
                 }
+                    /*functions[5].addActionListener(add);
+                    functions[4].addActionListener(subtract);
+                    functions[3].addActionListener(multiply);
+                    functions[2].addActionListener(divide);
+                    functions[1].addActionListener(cancel);
+                    functions[0].addActionListener(enter);*/
             container5.add(functionsPanel);
             container2.setBorder(BorderFactory.createLineBorder(Color.blue));
-
         add(container5, gbc);
-        setVisible(true);
 
 
-        JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
         menuBar.setBackground(Color.lightGray);
         menuBar.add(fileMenu);
+        setVisible(true);
     }
 
     public void actionPerformed(ActionEvent menuEvent){
@@ -204,49 +216,163 @@ public class TillSys extends JFrame implements ActionListener {
         //System.out.println(menuName);
     }
 
+
     private class ButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent pressedButton){
 
-            String pressed;
             pressed = pressedButton.getActionCommand();
 
-            switch (pressed) {
-                case "0" :
-                case "1" :
-                case "2" :
-                case "3" :
-                case "4" :
-                case "5" :
-                case "6" :
-                case "7" :
-                case "8" :
-                case "9" : {
-                    tempVal += pressed;
-                    break;
-                }
-                case "+" :
-                    num1 = Double.parseDouble(tempVal);
-                    tempVal = "";
-                    break;
-                case "-" :
-                    break;
-                case "/" :
-                    break;
-                case "*" :
-                    break;
-                case "C" :
-                    break;
-                case "Enter" :
-                    break;
+                    switch (pressed) {
+                        case "0" :
+                        case "1" :
+                        case "2" :
+                        case "3" :
+                        case "4" :
+                        case "5" :
+                        case "6" :
+                        case "7" :
+                        case "8" :
+                        case "9" : {
+                            tempString += pressed;
+                            displayArea = tempString;
+                            displayText.setText(displayArea);
+                        }
+                        break;
 
-                default:
-                    break;
+                        //This is working fine now
+                        case "+" : {
 
-            }
+                            num1 = Double.parseDouble(tempString);
+                            tempValue = num1 + num2;
+                            num2 = tempValue;
+
+                            tempString = Double.toString(tempValue);
+                            displayArea = tempString;
+                            displayText.setText(displayArea);
+                            tempString = "";
+                        }
+                        break;
+
+
+                        case "-" :{
+                            num1 = Double.parseDouble(tempString);
+                            tempValue = num1 - num2;
+                            num2 = tempValue;
+
+                            tempString = Double.toString(tempValue);
+                            displayArea = tempString;
+                            displayText.setText(displayArea);
+                            tempString = "";
+                        }
+                        case "/" :
+                            num1 = (Double.parseDouble(tempString)) + num1;
+                            tempString = "";
+                            break;
+                        case "*" :
+                            num2 = (Double.parseDouble(tempString));
+                            tempString = "";
+                            break;
+
+                        //this working fine now
+                        case "C" : {
+                            num1 = 0;
+                            num2 = 0;
+                            tempString = "";
+                            displayArea = tempString;
+                            displayText.setText(displayArea);
+                        }
+                        break;
+
+                        case "Enter" : {
+
+
+                            if(num1 == 0)
+                                num2 = 0;
+                            else {
+                                num2 = (Double.parseDouble(tempString));
+                            }
+                                tempString = "";
+                            displayText.setText(Double.toString(num2));
+                            }
+                            break;
+
+
+                        default: {
+                            System.out.println("error");
+
+                        }
+                            break;
+
+                    }
             System.out.println(pressed);
         }
     }
 
+
+
+    private class EnterButton implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            num1 = Double.parseDouble(displayArea);
+
+            if(num2 == 0)
+
+
+            if (pressed.equals("/")) {
+                displayText.setText(Double.toString((Math.round((num1 / num2) * 100)) / 100));
+            } else if (pressed.equals("*")) {
+                displayText.setText(Double.toString(num1 * num2));
+            } else if (pressed.equals("+")) {
+                /*displayText.setText(Double.toString(num1 + num2));*/
+            } else if (pressed.equals("-")) {
+                displayText.setText(Double.toString(num1 - num2));
+            } else {
+                displayText.setText(String.valueOf(num1));
+            }
+            num1 = Double.parseDouble(displayText.getText());
+
+        }
+    }
+
+    private class CancelButton implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            num1 = 0;
+            num2 = 0;
+        }
+    }
+
+    private class MultiplyButton implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if(num2 == 0) {
+                num1 = Double.parseDouble(displayText.getText());
+            }
+
+        }
+    }
+
+    private class DivideButton implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+        }
+    }
+
+    private class AddButton implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+        }
+    }
+
+    private class SubtractButton implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+        }
+    }
 
     private void loginFileMenu(){
 
@@ -267,63 +393,5 @@ public class TillSys extends JFrame implements ActionListener {
         fileMenu.add(item);
     }
 
-    /*
-    private class Enter implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-
-            temp = Double.parseDouble(display.getText());
-
-                if (function == 0) {
-                    display.setText(Double.toString((Math.round((num1 / num2) * 100)) / 100));
-                } else if (function == 1) {
-                    display.setText(Double.toString(num1 * num2));
-                } else if (function == 2) {
-                    display.setText(Double.toString(num2 + num1));
-                } else if (function == 3) {
-                    display.setText(Double.toString(num1 - num2));
-                } else {
-                    display.setText(String.valueOf(num1));
-                }
-                num1 = Double.parseDouble(display.getText());
-            }
-        }
-    }
-
-
-    private class Cancel implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-
-        }
-    }
-
-    private class Multiply implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-
-        }
-    }
-
-    private class Divide implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-
-        }
-    }
-
-    private class Add implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-
-        }
-    }
-
-    private class Subtract implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-
-        }
-    }*/
 
 }
