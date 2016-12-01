@@ -4,26 +4,30 @@
  * @Erwin Suarez
  * @version 1.00 2016/11/15
  */
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class TillSys extends JFrame implements ActionListener{
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
+import java.awt.geom.Arc2D;
+
+public class TillSys extends JFrame implements ActionListener {
 
     JTextField display;
-    String temp, displayArea = "123456789.0";
-    public String user;
+
     JMenu fileMenu;
     JPanel container1, container2, container3, container4, container5;
-    JButton[] button;
-    JButton[] funct;
-    double num1 = 0;
-    double num2 = 0;
+    JPanel extrasPanel,numbersPanel,functionsPanel;
+
+    JButton[] extras,numbers, functions;
+
+    String tempVal = "", displayArea = "123456789.0";
+    //public String user;
+    double num1 = 0, num2 = 0;
 
     //main driver
-	public static void main(String[] args){
-		
+	public static void main(String[] args) {
 		TillSys winOne = new TillSys();
         winOne.setVisible(true);
     }//end driver
@@ -33,7 +37,7 @@ public class TillSys extends JFrame implements ActionListener{
 
         //this will set the frame properties
         setTitle("Till System");
-        setSize(800, 640);
+        setSize(1024, 800);
         setResizable(false);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new GridBagLayout());
@@ -45,20 +49,12 @@ public class TillSys extends JFrame implements ActionListener{
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
 
-        //contents = getContentPane();
-        //contents.setLayout(new FlowLayout());
-
-
-        Multiply multiplication = new Multiply();
-
-
-
-
+        //login panel
         container1 = new JPanel();
             gbc.gridx = 0;
             gbc.gridy = 0;
-            gbc.weightx = 40;
-            gbc.weighty = 40;
+            gbc.weightx = 324;
+            gbc.weighty = 300;
             gbc.fill = GridBagConstraints.BOTH;
 
             //login area
@@ -91,14 +87,35 @@ public class TillSys extends JFrame implements ActionListener{
             gbc.gridx = 0;
             gbc.gridy = 1;
             gbc.weightx = 40;
-            gbc.weighty = 60;
+            gbc.weighty = 300;
             gbc.gridwidth = 1;
             gbc.fill = GridBagConstraints.BOTH;
+            gbc.insets = new Insets(10,10,10,10);
+
 
             //special buttons area
-            JTextArea extra = new JTextArea();
-                container3.add(extra);
-                container3.setBorder(BorderFactory.createLineBorder(Color.red));
+            container3.setLayout(new BorderLayout());
+            container3.setPreferredSize(new Dimension(300,400));
+            extrasPanel = new JPanel(new GridLayout(4,2,10,10));
+            extras = new JButton[8];
+                extras[7] = new JButton("Open7");
+                extras[6] = new JButton("Close6");
+                extras[5] = new JButton("Edit5");
+                extras[4] = new JButton("Delete4");
+                extras[3] = new JButton("Open3");
+                extras[2] = new JButton("Close2");
+                extras[1] = new JButton("Edit1");
+                extras[0] = new JButton("Delete0");
+
+                for( int w = 7; w >= 0; w--) {
+
+                    extras[w].setFont(new Font("Segoe UI", Font.BOLD, 14));
+                    extras[w].addActionListener(this);
+                    extrasPanel.add(extras[w]);
+                }
+
+            container3.add(extrasPanel);
+            container3.setBorder(BorderFactory.createLineBorder(Color.red));
         add(container3, gbc);
 
 
@@ -112,17 +129,19 @@ public class TillSys extends JFrame implements ActionListener{
 
             //numbers buttons area
             container4.setLayout(new BorderLayout());
-            JPanel numpad = new JPanel();
-            JButton[] buttons = new JButton[10];
-                numpad.setLayout(new GridLayout(4,3,10,10));
+            container4.setPreferredSize(new Dimension(500,400));
+            numbersPanel = new JPanel();
+            numbersPanel.setLayout(new GridLayout(4,3,10,10));
+            numbers = new JButton[10];
                 for( int x = 9; x >= 0; x--) {
-                    buttons[x] = new JButton(Integer.toString(x));
-                    buttons[x].addActionListener(this);
-                    numpad.add(buttons[x], gbc);
+                    numbers[x] = new JButton(Integer.toString(x));
+                    numbers[x].setFont(new Font("Segoe UI", Font.BOLD, 36));
+                    numbers[x].addActionListener(this);
+                    numbersPanel.add(numbers[x]);
                 }
 
-            container4.add(numpad);
-            container4.setBorder(BorderFactory.createLineBorder(Color.green));
+            container4.add(numbersPanel);
+            container2.setBorder(BorderFactory.createLineBorder(Color.green));
         add(container4, gbc);
 
 
@@ -135,19 +154,27 @@ public class TillSys extends JFrame implements ActionListener{
 
             //function buttins area
             container5.setLayout(new BorderLayout());
-            JPanel function = new JPanel();
-            JButton[] funct = new JButton[6];
+            container5.setPreferredSize(new Dimension(200,400));
+            functionsPanel = new JPanel();
+            functions = new JButton[6];
 
-                function.setLayout(new GridLayout(3,2,15,15));
-                function.add(funct[5] = new JButton("+"));
-                function.add(funct[4] = new JButton("-"));
-                function.add(funct[3] = new JButton("*"));
-                function.add(funct[2] = new JButton("/"));
-                function.add(funct[1] = new JButton("C"));
-                function.add(funct[0] = new JButton("Enter"));
+            //call the buttons to listen
+            ButtonListener btnListener = new ButtonListener();
 
-            container5.setBorder(BorderFactory.createLineBorder(Color.blue));
-            container5.add(function);
+                functionsPanel.setLayout(new GridLayout(3,2,15,15));
+                functionsPanel.add(functions[5] = new JButton("+"));
+                functionsPanel.add(functions[4] = new JButton("-"));
+                functionsPanel.add(functions[3] = new JButton("*"));
+                functionsPanel.add(functions[2] = new JButton("/"));
+                functionsPanel.add(functions[1] = new JButton("C"));
+                functionsPanel.add(functions[0] = new JButton("Enter"));
+                for( int y = 5; y >= 0; y--) {
+                    functions[y].setFont(new Font("Segoe UI", Font.BOLD, 36));
+                    functions[y].addActionListener(btnListener);
+                    functionsPanel.add(functions[y]);
+                }
+            container5.add(functionsPanel);
+            container2.setBorder(BorderFactory.createLineBorder(Color.blue));
 
         add(container5, gbc);
         setVisible(true);
@@ -177,6 +204,50 @@ public class TillSys extends JFrame implements ActionListener{
         //System.out.println(menuName);
     }
 
+    private class ButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent pressedButton){
+
+            String pressed;
+            pressed = pressedButton.getActionCommand();
+
+            switch (pressed) {
+                case "0" :
+                case "1" :
+                case "2" :
+                case "3" :
+                case "4" :
+                case "5" :
+                case "6" :
+                case "7" :
+                case "8" :
+                case "9" : {
+                    tempVal += pressed;
+                    break;
+                }
+                case "+" :
+                    num1 = Double.parseDouble(tempVal);
+                    tempVal = "";
+                    break;
+                case "-" :
+                    break;
+                case "/" :
+                    break;
+                case "*" :
+                    break;
+                case "C" :
+                    break;
+                case "Enter" :
+                    break;
+
+                default:
+                    break;
+
+            }
+            System.out.println(pressed);
+        }
+    }
+
+
     private void loginFileMenu(){
 
         JMenuItem item;
@@ -196,6 +267,7 @@ public class TillSys extends JFrame implements ActionListener{
         fileMenu.add(item);
     }
 
+    /*
     private class Enter implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -217,6 +289,7 @@ public class TillSys extends JFrame implements ActionListener{
             }
         }
     }
+
 
     private class Cancel implements ActionListener {
         @Override
@@ -251,6 +324,6 @@ public class TillSys extends JFrame implements ActionListener{
         public void actionPerformed(ActionEvent e) {
 
         }
-    }
+    }*/
 
 }
