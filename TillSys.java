@@ -255,8 +255,29 @@ public class TillSys extends JFrame implements ActionListener {
 
 
                         case "-" :{
+
                             num1 = Double.parseDouble(tempString);
+
+                            num2 = tempValue - num1;
+                            tempValue = num2;
+                            num2 = tempValue;
                             tempValue = num1 - num2;
+
+
+                            tempString = Double.toString(tempValue);
+                            displayArea = tempString;
+                            displayText.setText(displayArea);
+                            tempString = "";
+                        }
+                        case "/" : {
+                            num1 = (Double.parseDouble(tempString)) + num1;
+                            tempString = "";
+                        }
+                            break;
+
+                        case "*" : {
+                            num1 = Double.parseDouble(tempString);
+                            tempValue = num1;
                             num2 = tempValue;
 
                             tempString = Double.toString(tempValue);
@@ -264,13 +285,6 @@ public class TillSys extends JFrame implements ActionListener {
                             displayText.setText(displayArea);
                             tempString = "";
                         }
-                        case "/" :
-                            num1 = (Double.parseDouble(tempString)) + num1;
-                            tempString = "";
-                            break;
-                        case "*" :
-                            num2 = (Double.parseDouble(tempString));
-                            tempString = "";
                             break;
 
                         //this working fine now
@@ -293,14 +307,11 @@ public class TillSys extends JFrame implements ActionListener {
                             }
                                 tempString = "";
                             displayText.setText(Double.toString(num2));
-                            }
+                        }
                             break;
 
 
-                        default: {
-                            System.out.println("error");
-
-                        }
+                        default:
                             break;
 
                     }
