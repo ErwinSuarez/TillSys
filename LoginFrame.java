@@ -1,7 +1,7 @@
 /* @(#)LoginFrame.java
  *
  * @Erwin Suarez
- * @version 1.00 2016/12/1
+ * @version 1.00 2016/11/15
  */
 
 import javax.swing.*;
@@ -19,6 +19,7 @@ public class LoginFrame extends JFrame {
 
     public LoginFrame (TillSys parent) {
         this.parent = parent;
+
         setSize(320, 150);
         setTitle("Login");
         setLocationRelativeTo(parent);
@@ -32,14 +33,14 @@ public class LoginFrame extends JFrame {
         userText.setBounds(100, 10, 160, 25);
         panel.add(userText);
 
+        userText.setText(userText.getText());
+
 
         JButton loginButton = new JButton("login");
         loginButton.setBounds(10, 80, 80, 25);
         panel.add(loginButton);
 
         loginButton.addActionListener(new BtnHandler());
-
-
         add(panel);
 
         //hides the main window
@@ -60,16 +61,12 @@ public class LoginFrame extends JFrame {
     }
 
     private void login () {
+        LoginFrame.this.dispose();
         parent.setVisible(true);
         parent.setUserName(userText.getText());
-        LoginFrame.this.dispose();
     }
 
-
     private static void placeComponents(JPanel panel) {
-
         panel.setLayout(null);
-
-
     }
 }
