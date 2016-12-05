@@ -1,17 +1,25 @@
-/**
- * Created by t00189596 on 22/11/2016.
+/* @(#)LoginFrame.java
+ *
+ * @Erwin Suarez
+ * @version 1.00 2016/12/1
  */
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class LoginFrame extends JFrame {
 
     JPanel panel;
+    private JTextField userText;
+    TillSys parent;
 
     public LoginFrame (TillSys parent) {
-        setSize(300, 200);
+        this.parent = parent;
+        setSize(320, 150);
         setTitle("Login");
         setLocationRelativeTo(parent);
         panel = new JPanel(new FlowLayout());
@@ -20,43 +28,43 @@ public class LoginFrame extends JFrame {
         userLabel.setBounds(10, 10, 80, 25);
         panel.add(userLabel);
 
-        JTextField userText = new JTextField(20);
+        userText = new JTextField(20);
         userText.setBounds(100, 10, 160, 25);
         panel.add(userText);
 
-
-
-        JLabel passwordLabel = new JLabel("Password");
-        passwordLabel.setBounds(10, 40, 80, 25);
-        panel.add(passwordLabel);
-
-        JPasswordField passwordText = new JPasswordField(20);
-        passwordText.setBounds(100, 40, 160, 25);
-        panel.add(passwordText);
 
         JButton loginButton = new JButton("login");
         loginButton.setBounds(10, 80, 80, 25);
         panel.add(loginButton);
 
-        JButton registerButton = new JButton("register");
-        registerButton.setBounds(180, 80, 80, 25);
-        panel.add(registerButton);
+        loginButton.addActionListener(new BtnHandler());
+
 
         add(panel);
-
 
         //hides the main window
         parent.setVisible(false);
 
-
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                parent.setVisible(true);
-                LoginFrame.this.dispose();
+                login();
             }
         });
     }
+
+    public class BtnHandler implements ActionListener {
+        public void actionPerformed (ActionEvent e) {
+            login();
+        }
+    }
+
+    private void login () {
+        parent.setVisible(true);
+        parent.setUserName(userText.getText());
+        LoginFrame.this.dispose();
+    }
+
 
     private static void placeComponents(JPanel panel) {
 

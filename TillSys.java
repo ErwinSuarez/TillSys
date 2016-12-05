@@ -3,12 +3,11 @@
  * @Erwin Suarez
  * @version 1.00 2016/12/1
  */
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import javax.management.StringValueExp;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Arc2D;
 
 public class TillSys extends JFrame implements ActionListener {
 
@@ -16,16 +15,19 @@ public class TillSys extends JFrame implements ActionListener {
 
     JMenu fileMenu;
     JPanel container1, container2, container3, container4, container5;
-    JPanel extrasPanel,numbersPanel,functionsPanel;
+    JPanel loginPanel, extrasPanel,numbersPanel,functionsPanel;
     JButton[] extras,numbers, functions;
+    JLabel userLabel;
 
     String tempString = "";
     String pressed;
-    //public String user;
+    String userName = "Guest";
+    char[] userPassword;
     double num1, num2;
     double tempValue = 0;
     double answer;
     int operation;
+    private boolean isCalculated = false;
 
 
     public static void main(String[] args) {
@@ -63,15 +65,18 @@ public class TillSys extends JFrame implements ActionListener {
 
         //login panel
         container1 = new JPanel();
-        gbc.gridx = 0;
+                gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 224;
         gbc.weighty = 300;
         gbc.fill = GridBagConstraints.BOTH;
 
         //login area
-        JTextArea text = new JTextArea();
-        container1.add(text);
+                loginPanel = new JPanel(new FlowLayout());
+                userLabel = new JLabel(userName);
+                userLabel.setFont(new Font("Segoe UI", Font.BOLD, 48));
+                loginPanel.add(userLabel);
+        container1.add(loginPanel);
 
         container1.setBorder(BorderFactory.createLineBorder(Color.black));
         add(container1, gbc);
@@ -199,6 +204,11 @@ public class TillSys extends JFrame implements ActionListener {
         setVisible(true);
     }
 
+    public void setUserName (String userName) {
+        this.userName = userName;
+        userLabel.setText(userName);
+    }
+
     public void actionPerformed(ActionEvent menuEvent){
         String menuName;
         menuName = menuEvent.getActionCommand();
@@ -222,10 +232,18 @@ public class TillSys extends JFrame implements ActionListener {
     //number buttons
     private class ButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent pressedButton) {
-
             pressed = pressedButton.getActionCommand();
-            tempString = String.valueOf(displayTextField.getText()) + pressed;
+            if (!isCalculated) {
+                tempString = String.valueOf(displayTextField.getText()) + pressed;
+
+            } else {
+                tempString = pressed;
+            }
+
+            isCalculated = false;
+
             displayTextField.setText(tempString);
+
         }
     }
                                             /*        switch (pressed) {
@@ -256,6 +274,7 @@ public class TillSys extends JFrame implements ActionListener {
             num2 = Double.parseDouble(displayTextField.getText());
             mathOperation();
 
+
             switch(operation){
                 case 1:
                     answer = num1 * num2;
@@ -276,7 +295,10 @@ public class TillSys extends JFrame implements ActionListener {
                     answer = num1 - num2;
                     displayTextField.setText(Double.toString(answer));
                     break;
+
             }
+
+            isCalculated = true;
         }
     }
 
@@ -310,14 +332,31 @@ public class TillSys extends JFrame implements ActionListener {
         }
     }
 
+    public static boolean isNumeric(String str)
+    {
+        try
+        {
+            double d = Double.parseDouble(str);
+        }
+        catch(NumberFormatException nfe)
+        {
+            return false;
+        }
+        return true;
+    }
+
     private class AddButton implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            num1 = Double.parseDouble(String.valueOf(displayTextField.getText()));
-            tempString = "+";
-            displayTextField.setText(tempString);
+            String enteredVal = String.valueOf(displayTextField.getText());
 
-            operation = 3;
+            if (isNumeric(enteredVal)) {
+                num1 = Double.parseDouble(enteredVal);
+                tempString = "+";
+                displayTextField.setText(tempString);
+
+                operation = 3;
+            }
         }
     }
 
