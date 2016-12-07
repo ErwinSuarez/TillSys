@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
 import java.awt.*;
+import java.util.Date;
 
 public class TillSys extends JFrame implements ActionListener {
 
@@ -19,16 +20,16 @@ public class TillSys extends JFrame implements ActionListener {
     JButton[] extras,numbers, functions;
     JLabel userLabel;
 
+    static String userName = "Guest";
     String tempString = "";
     String pressed;
-    static String userName = "Guest";
-    double num1, num2;
+
     double tempValue = 0;
+    double num1, num2;
     double answer;
     int operation;
     private boolean isCalculated = false;
-    public boolean isLog = false;
-    double runningTotal=0;
+
     WriteLog logFile;
 
     /**
@@ -72,6 +73,7 @@ public class TillSys extends JFrame implements ActionListener {
         setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
 
         GridBagConstraints gbc = new GridBagConstraints();
+        JMenuBar menuBar = new JMenuBar();
 
         ButtonListener buttonListener = new ButtonListener();
         ExtrasListener extrasListener = new ExtrasListener();
@@ -81,7 +83,7 @@ public class TillSys extends JFrame implements ActionListener {
         DivideButton divide = new DivideButton();
         AddButton add = new AddButton();
         SubtractButton subtract = new SubtractButton();
-        JMenuBar menuBar = new JMenuBar();
+        ;
 
 
         //login panel
@@ -103,6 +105,7 @@ public class TillSys extends JFrame implements ActionListener {
 
         //display panel
         container2 = new JPanel();
+        container2.setLayout(new BorderLayout());
             gbc.gridx = 1;
             gbc.gridy = 0;
             gbc.weighty = 40;
@@ -115,13 +118,14 @@ public class TillSys extends JFrame implements ActionListener {
             displayTextField.setLayout(new BorderLayout());
             displayTextField.setFont(new Font("Segoe UI", Font.BOLD, 48));
             displayTextField.setHorizontalAlignment(SwingConstants.RIGHT);
-        container2.setLayout(new BorderLayout());
         container2.add(displayTextField);
         container2.setBorder(BorderFactory.createLineBorder(Color.yellow));
         add(container2, gbc);
 
         //special buttons panel
         container3 = new JPanel();
+        container3.setLayout(new BorderLayout());
+        container3.setPreferredSize(new Dimension(300,400));
             gbc.gridx = 0;
             gbc.gridy = 1;
             gbc.weightx = 40;
@@ -131,8 +135,6 @@ public class TillSys extends JFrame implements ActionListener {
             gbc.insets = new Insets(10,10,10,10);
 
             //special buttons
-            container3.setLayout(new BorderLayout());
-            container3.setPreferredSize(new Dimension(300,400));
             extrasPanel = new JPanel(new GridLayout(4,2,10,10));
             extras = new JButton[8];
             extras[7] = new JButton("Item 7");
@@ -141,9 +143,8 @@ public class TillSys extends JFrame implements ActionListener {
             extras[4] = new JButton("Item 4");
             extras[3] = new JButton("Item 3");
             extras[2] = new JButton("Item 2");
-            extras[1] = new JButton("Item 1");
+            extras[1] = new JButton("Save Log");
             extras[0] = new JButton("View Log");
-
             for( int w = 0; w <= 7; w++) {
                 extras[w].setFont(new Font("Segoe UI", Font.BOLD, 14));
                 extras[w].addActionListener(extrasListener);
@@ -156,15 +157,16 @@ public class TillSys extends JFrame implements ActionListener {
 
         //numbers panel
         container4 = new JPanel();
+        container4.setLayout(new BorderLayout());
+        container4.setPreferredSize(new Dimension(500,400));
             gbc.gridx = 1;
             gbc.gridy = 1;
             gbc.weightx = 35;
             gbc.weighty = 40;
             gbc.fill = GridBagConstraints.BOTH;
             gbc.insets = new Insets(10,10,10,10);
+
             //numbers buttons area
-            container4.setLayout(new BorderLayout());
-            container4.setPreferredSize(new Dimension(500,400));
             numbersPanel = new JPanel();
             numbersPanel.setLayout(new GridLayout(4,3,10,10));
             numbers = new JButton[11];
@@ -184,15 +186,15 @@ public class TillSys extends JFrame implements ActionListener {
 
         //functions panel
         container5 = new JPanel();
+        container5.setLayout(new BorderLayout());
+        container5.setPreferredSize(new Dimension(200,400));
             gbc.gridx = 2;
             gbc.gridy = 1;
             gbc.weightx = 25;
             gbc.weighty = 60;
             gbc.fill = GridBagConstraints.BOTH;
 
-        //function buttons area
-        container5.setLayout(new BorderLayout());
-        container5.setPreferredSize(new Dimension(200,400));
+            //function buttons area
             functionsPanel = new JPanel();
             functions = new JButton[6];
             functionsPanel.setLayout(new GridLayout(3,2,15,15));
@@ -223,7 +225,7 @@ public class TillSys extends JFrame implements ActionListener {
     }
 
     /**
-     * This sets the username to whateve the user enters
+     * This sets the username
      * @param userName
      */
     public void setUserName (String userName) {
@@ -231,6 +233,10 @@ public class TillSys extends JFrame implements ActionListener {
         userLabel.setText(userName);
     }
 
+    /**
+     * retrieves the user name
+     * @return
+     */
     public static String getUserName()
     {
         return TillSys.userName;
@@ -255,14 +261,16 @@ public class TillSys extends JFrame implements ActionListener {
             LoginFrame adminLogin = new LoginFrame(TillSys.this);
             adminLogin.setVisible(true);
         }
-        //System.out.println(menuName);
     }
 
     //number buttons
     private class ButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent pressedButton) {
+            //get the number button being pressed
             pressed = pressedButton.getActionCommand();
+            //checkes if equals button was pressed
             if (!isCalculated) {
+                //concatonates the string of buttons pressed and stored into tempString
                 tempString = String.valueOf(displayTextField.getText()) + pressed;
             }
 
@@ -273,14 +281,20 @@ public class TillSys extends JFrame implements ActionListener {
         }
     }
 
+    // handles the extras button
     private class ExtrasListener implements ActionListener {
         public void actionPerformed(ActionEvent pressedButton) {
-            // check if log file button
-            System.out.println("Clicking extras button");
-            System.out.println(logFile.toString());
+
+            if(pressedButton.getActionCommand().equals("Save Log")) {
+                logFile.addToLog(getUserName() + " " + new Date());
+            }
+            if(pressedButton.getActionCommand().equals("View Log")) {
+                JOptionPane.showMessageDialog(null,logFile);
+            }
         }
     }
 
+    //handles enter button
     private class EnterButton implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -336,6 +350,9 @@ public class TillSys extends JFrame implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             tempString = "";
+            num1 = 0;
+            num2 = 0;
+            answer = 0;
             displayTextField.setText(tempString);
         }
     }
@@ -415,7 +432,7 @@ public class TillSys extends JFrame implements ActionListener {
                 String fieldString = displayTextField.getText();
 
                 if(!fieldString.equals("+"))
-                     answer = num2 + Double.parseDouble(displayTextField.getText());
+                    answer = num2 + Double.parseDouble(displayTextField.getText());
                 displayTextField.setText(Double.toString(answer));
                 break;
             case 4:     //subtract
@@ -444,8 +461,5 @@ public class TillSys extends JFrame implements ActionListener {
         item.addActionListener(this);
         fileMenu.add(item);
     }
-
-
-
 
 }
