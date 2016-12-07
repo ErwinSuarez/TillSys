@@ -1,6 +1,6 @@
 /* @(#)LoginFrame.java
  *
- * @Erwin Suarez
+ * @author Erwin Suarez
  * @version 1.00 2016/11/15
  */
 
@@ -17,7 +17,12 @@ public class LoginFrame extends JFrame {
     private JTextField userText;
     TillSys parent;
 
+    /**
+     * initally creates the login frame that passes the parent class TillSys as reference      *
+     * @param parent
+     */
     public LoginFrame (TillSys parent) {
+
         this.parent = parent;
 
         setSize(320, 150);
@@ -34,7 +39,6 @@ public class LoginFrame extends JFrame {
         panel.add(userText);
 
         userText.setText(userText.getText());
-
 
         JButton loginButton = new JButton("login");
         loginButton.setBounds(10, 80, 80, 25);
@@ -54,18 +58,28 @@ public class LoginFrame extends JFrame {
         });
     }
 
+    /**
+     * hamdles the login button
+     */
     public class BtnHandler implements ActionListener {
         public void actionPerformed (ActionEvent e) {
             login();
         }
     }
 
+    /**
+     * dis
+     */
     private void login () {
         LoginFrame.this.dispose();
         parent.setVisible(true);
         parent.setUserName(userText.getText());
     }
 
+    /**
+     * placed it there co'z i can  -
+     * @param panel
+     */
     private static void placeComponents(JPanel panel) {
         panel.setLayout(null);
     }
